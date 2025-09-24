@@ -1,11 +1,12 @@
 import json
 from pythonping import ping
 import re
-
+import time
 
 print("Welcome to server pinger")
 print("1. Add server")
 print("2. show servers status")
+print("3 test")
 option = input("Choose an option:")
 
 
@@ -64,9 +65,11 @@ def getserverinfo():
     try:
         with open("servers.json", "r") as f:
             servers = json.load(f)
-        server_list = []
+        
         for server in servers:
+            server_list = []
             server_list.append( "server: %s, ip: %s" % (server["server"], server["ip"]))
+            print(server_list)
         return server_list
         
     except (FileNotFoundError, json.JSONDecodeError):
@@ -90,9 +93,22 @@ def pingserver():
         
 
 def showserverstaus():
-    pingserver()
-    print (pingserver())
-
+    shutdown = True
+    
+    
+    
+    while shutdown == True:
+        if KeyboardInterrupt == "q":
+            break
+        print("\nChecking servers status...")
+        pingserver()
+        # Wait for 60 seconds before next check
+        print("\nWaiting 60 seconds before next check... ")
+        print(pingserver())
+        time.sleep(5)
+        
+        
+    
 
 
 
@@ -101,4 +117,9 @@ if option == "1":
     addserver()
 
 if option == "2":
-    print(pingserver())
+    showserverstaus()
+    
+
+if option == "3":
+    getserverinfo()
+    print(getserverinfo)
