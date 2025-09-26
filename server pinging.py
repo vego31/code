@@ -6,7 +6,6 @@ import time
 print("Welcome to server pinger")
 print("1. Add server")
 print("2. show servers status")
-print("3 test")
 option = input("Choose an option:")
 
 
@@ -18,6 +17,11 @@ def is_valid_ip(ip):
     # Check if each octet is between 0 and 255
     octets = ip.split('.')
     return all(0 <= int(octet) <= 255 for octet in octets)
+
+
+
+
+
 
 def addserver():
     print("add server")
@@ -53,14 +57,14 @@ def addserver():
     with open("servers.json", "w") as f:
         json.dump(servers, f, indent=4)
 
+# Add server info to servers.json file
 
 
 
 
 
 
-
-def getserverinfo():
+def pingserver():
     print("show server status")
     try:
         with open("servers.json", "r") as f:
@@ -70,44 +74,37 @@ def getserverinfo():
             server_list = []
             server_list.append( "server: %s, ip: %s" % (server["server"], server["ip"]))
             print(server_list)
-        return server_list
-        
+           
+
+            ping_response = ping(server["ip"], count=1, timeout=2)
+            if ping_response.success():
+                ping == True
+                print(f"Server {server['server']} ({server['ip']}) is reachable.")
+            else:
+                print(f"Server {server['server']} ({server['ip']}) is not reachable.")
+                ping == False
+            time.sleep(1)  # Pause for a second between pings
+
+        if ping == True:
+            print(ping_response)
+            
+        elif ping == False:
+            print("No response received.")
+
+
+            
+    
+
     except (FileNotFoundError, json.JSONDecodeError):
         print("No servers found.")
         return
 
+# Get server info from servers.json file
 
 
 
-def pingserver():
-    server_list = getserverinfo()
-    if server_list is None:
-        return
-    for server in server_list:
-        ip = server.split("ip: ")[1]
-        ping_response = ping(ip, count=1, timeout=2)
-        
-        if ping_response.success():
-            print("Server %s is online." % server)
-        return ping_response
-        
 
-def showserverstaus():
-    shutdown = True
-    
-    
-    
-    while shutdown == True:
-        if KeyboardInterrupt == "q":
-            break
-        print("\nChecking servers status...")
-        pingserver()
-        # Wait for 60 seconds before next check
-        print("\nWaiting 60 seconds before next check... ")
-        print(pingserver())
-        time.sleep(5)
-        
-        
+
     
 
 
@@ -116,10 +113,11 @@ def showserverstaus():
 if option == "1":
     addserver()
 
-if option == "2":
-    showserverstaus()
     
 
-if option == "3":
-    getserverinfo()
-    print(getserverinfo)
+
+
+
+if option == "2":
+    pingserver()
+    
