@@ -3,10 +3,9 @@ from pythonping import ping
 import re
 import time
 
-print("Welcome to server pinger")
-print("1. Add server")
-print("2. show servers status")
-option = input("Choose an option:")
+
+
+
 
 
 def is_valid_ip(ip):
@@ -40,7 +39,9 @@ def addserver():
     new_server = {
         "id": server,
         "server": server,
-        "ip": ip
+        "ip": ip,
+        "server_conter": serverconter() + 1
+        
     }
     
     try:
@@ -56,10 +57,52 @@ def addserver():
     # Write back entire array
     with open("servers.json", "w") as f:
         json.dump(servers, f, indent=4)
-
+    menu()
 # Add server info to servers.json file
 
+def serverconter():
+    with open("servers.json", "r") as f:
+        servers = json.load(f)
 
+    server_conter = 0
+    for server in servers:
+        server_conter += 1
+
+    return server_conter
+
+
+def removeserver():
+
+
+   
+        with open("servers.json", "r") as f:
+            servers = json.load(f)
+
+        
+        for server in servers:
+            server_list = []
+            server_list.append( "server: %s, ip: %s" % (server["server"], server["ip"])) 
+            
+            print(server_list)
+
+            removeserver = input("Enter the server name to remove: ")
+            if server["server"] == removeserver:
+                servers.remove(server)
+                print(f"Server {removeserver} has been removed.")
+                menu()
+            else:
+                print(f"Server {removeserver} not found.")
+                menu()
+           
+            
+
+            print(server_list)
+
+ 
+
+
+
+    
 
 
 
@@ -91,13 +134,15 @@ def pingserver():
         elif ping == False:
             print("No response received.")
 
+        menu()    
 
             
     
 
+
     except (FileNotFoundError, json.JSONDecodeError):
         print("No servers found.")
-        return
+        menu()
 
 # Get server info from servers.json file
 
@@ -105,19 +150,31 @@ def pingserver():
 
 
 
+def menu():
+
+    print("Select an option:")
+    print("1. Add Server")
+    print("2. Ping Servers")
+    print("3. Remove Server")
+    print("4. Exit")
+    option = input("Enter option (1 or 2): ")
     
-
-
-
-
-if option == "1":
-    addserver()
+    if option == "1":
+     addserver()
 
     
+    if option == "2":
+        pingserver()
+
+    if option == "3":
+        removeserver()
+
+    if option == "4":
+        return
+
+menu()
 
 
 
 
-if option == "2":
-    pingserver()
-    
+
